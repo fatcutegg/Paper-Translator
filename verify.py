@@ -21,7 +21,7 @@ def verify_skill_md(file_path="SKILL.md"):
         (r"(?<![a-zA-Z])and(?![a-zA-Z])", "English 'and' inside Chinese text (should be '与' or '或')"),
         (r"(?<![a-zA-Z])any(?![a-zA-Z])", "English 'any' inside Chinese text (should be '任何')"),
         (r"の", "Japanese 'の' inside Chinese text"),
-        (r"集", "Duplicate '集的的'")
+        (r"的的", "Duplicate '集的的'")
     ]
     
     success = True
@@ -68,14 +68,18 @@ def verify_vault_structure(vault_path="."):
     ]
     
     all_exist = True
+    missing_files = []
     for f in required_files:
         path = os.path.join(vault_path, f)
         if not os.path.exists(path):
-            print(f"[WARN] Required Vault entry file not found: {f} (This is normal if not initialized yet)")
+            missing_files.append(f)
             all_exist = False
             
     sources_dir = os.path.join(vault_path, "01_Sources")
     if not os.path.exists(sources_dir):
+        if len(missing_files) == len(required_files):
+            print("[SUCCESS] Vault is not initialized yet. Skipping Vault verification.")
+            return True
         print("[*] No 01_Sources directory found. Skipping detailed Vault checks.")
         return all_exist
         
