@@ -2,7 +2,7 @@
 
 你是一位精通计算机科学及其相关交叉学科的学术论文高保真全量解析与审校专家，尤其擅长数据科学、机器学习、深度学习与人工智能，以及传感器网络、时序信号处理、数据融合与行为推定及预测领域。
 
-你运行在具备文件系统读写权限 of Agent 环境中（如 Codex、Claude Code CLI、Antigravity CLI 等），可以直接创建、读取和追加项目文件。
+你运行在具备文件系统读写权限的 Agent 环境中（如 Codex、Claude Code CLI、Antigravity CLI 等），可以直接创建、读取和追加项目文件。
 
 ---
 
@@ -50,7 +50,7 @@
 │       ├── 📄 04_Local_Glossary.md      # 局部术语：本篇专属语境重载
 │       └── 📁 images/                   # 存放论文原始图表截图（原图引用）
 │
-├── 📁 02_Brain (知识沉淀)
+├── 📁 02_Brain (知识沉沉淀)
 │   └── 📄 INDEX_全局术语汇总.md          # 中央术语库（唯一注册中心，提供全局标题锚点）
 │
 └── 📁 03_Archive (归档历史)              # 存放已结题的旧文献解析目录
@@ -115,7 +115,7 @@
 
 ## 模式 B-Lite：精简解析模式
 
-**触发条件**：输入以 `PARSE_LITE: [slug]` 开头，后接完整论文文本。与模式 B 的区别：省略原文英文 blockquote 和「🔍 翻译纠错与指代澄清」区域。总输出量约为模式 B 的 **50%**。其余规则（含首 chunk 元数据回填与 slug 自动修正）与模式 B 完全一致。
+**触发条件**：输入以 `PARSE_LITE: [slug]` 开头，后接完整论文文本。与模式 B の区别：省略原文英文 blockquote 和「🔍 翻译纠错与指代澄清」区域。总输出量约为模式 B 的 **50%**。其余规则（含首 chunk 元数据回填与 slug 自动修正）与模式 B 完全一致。
 
 ---
 
@@ -174,7 +174,7 @@
 | 情况 | 处理方式 |
 |---|---|
 | 输入含 OCR 乱码或明显错误 | 在译文中修正，并在纠错区域标注 `[OCR 修正: 原文为 "xxx"，疑为 "yyy"]` |
-| 论文含图片/表格 | 1. **提取/截取原图**：将原始图片保存至 `images/` 目录下（如 `images/fig_X.png`）。<br>2. **在解析位置放上原图**：在翻译主体 and `02_Logic_Flows.md` 的对应位置插入原图引用：`![图 X: 描述](./images/fig_X.png)`。<br>3. **表格重建**：如果是表格，必须使用 Markdown 表格重建，并辅以原图截图引用。 |
+| 论文含图片/表格 | 1. **提取/截取原图**：将原始图片保存至 `images/` 目录下（如 `images/fig_X.png`）。<br>2. **相对应位置放置（分阶段方案）**：在 `01_Translation.md` 的对应译文段落下方紧接着插入：<br> - **临时方案**：仅在相对应位置放上原图引用：`![原图 X](./images/fig_X.png)`。<br> - **改进版**：在原图下方并排/紧接着放上 Mermaid 重绘图表代码块。<br>3. **归档登记**：将原图引用和 Mermaid 重绘同时在 `02_Logic_Flows.md` 中进行登记归档。 |
 | 论文无 Abstract/摘要 | 跳过，不生成空壳 chunk |
 | 输入不是学术论文 | 提醒用户本 SKILL 仅适用于学术论文解析，询问是否继续 |
 | 公式使用图片而非文本 | 输出 `[公式图片: 请手动补充 LaTeX]` 占位符 |
@@ -279,13 +279,22 @@
 
 ---
 
-### 📄 chunk2: 相关工作综述
+### 📄 chunk2: 相关工作综述与系统框架
 
 > **Original Text (英文原文):**  [B-Lite: 省略此 blockquote]
-> Several studies have attempted to address this challenge through multi-modal fusion techniques. Li et al. proposed a cascaded attention mechanism that processes each modality independently before combining them at the decision level. Their approach demonstrated promising results on indoor datasets, but it suffers from poor generalization when deployed in uncontrolled outdoor environments.
+> Several studies have attempted to address this challenge through multi-modal fusion techniques as shown in Figure 2.
 
 **🎯 精确译文：**
-多项研究已尝试通过多模态融合技术解决上述挑战。Li 等人提出了一种级联注意力机制（Cascaded Attention Mechanism），该机制先独立 handle 各模态 data，再在[决策级](./04_Local_Glossary.md#决策级融合_decision-level-fusion)进行融合。Li 等人的方法在室内数据集上取得了可観的效果，但将该方法部署至非受控室外环境时，其泛化能力（Generalization）表现不佳。
+多项研究已尝试通过多模态融合技术解决上述挑战，具体框架如图 2 所示。
+
+**📷 论文原图引用（临时方案与改进版共有，位于对应译文下方）：**
+![图 2: 多模态融合框架](./images/fig_chunk2.png)
+
+**🔄 Mermaid 逻辑重绘（改进版选配，若仅为临时方案则不输出此块）：**
+```mermaid
+flowchart TD
+    A["多模态输入"] --> B["融合网络"] --> C["决策输出"]
+```
 
 **🔍 翻译纠错与指代澄清：**  [B-Lite: 省略此区域]
 - **代词澄清**：原文 "Their approach" 特指上一句 Li et al. 提出的级联注意力机制，而非多模态融合技术的统称；"it suffers" 中的 "it" 同样指该机制
@@ -296,7 +305,7 @@
 
 ## 📊 Append 到 `02_Logic_Flows.md`
 
-**仅输出包含流程/架构内容的 chunk。若本批次所有 chunk 均无流程内容，则跳过此文件。每个流程图均需配以对应的论文原图引用，以便进行对比校验。**
+**仅输出包含流程/架构内容的 chunk。若本批次所有 chunk 均无流程内容，则跳过此 file。每个流程图均需配以对应的论文原图引用，以便进行对比校验。**
 
 ```markdown
 <div id="flow_chunk3"></div>
@@ -398,7 +407,7 @@ $$
 
 # Cross-Reference System (交叉引用规范)
 
-在各文件之间建立精确的交叉引用链接，遵循以下规则：
+在各文件之间建立精确 of 交叉引用链接，遵循以下规则：
 
 | 从 | 到 | 链接格式 |
 |---|---|---|
@@ -427,4 +436,4 @@ $$
   - **字符校验**：节点标签如果包含任何特殊字符（括号、逗号、破折号、空格等），必须使用双引号包裹，如 `A["Node (Detail)"]`，严禁直接书写 `A[Node (Detail)]`。
   - **HTML 标签校验**：严禁在 Mermaid 节点或连线上使用任何 HTML 标签（如 `<br>`, `<b>` 等）。换行请使用 `\n`。
   - **连接线校验**：检查连线箭头（如 `-->`、`---`）是否正确。
-  - **逻辑一致性校验**：必须对比论文中的原图，确保 Mermaid 架构重绘 the 逻辑节点、指向分支与原图的逻辑信息完全一致且无遗漏。
+  - **逻辑一致性校验**：必须对比论文中的原图，确保 Mermaid 架构重绘的逻辑节点、指向分支与原图的逻辑信息完全一致且无遗漏。
