@@ -73,6 +73,9 @@
    - 全部小写，空格和连字符替换为下划线，仅保留 `[a-z0-9_]`
    - 若输入不含年份，提示用户补充
    - 示例：`Attention Is All You Need.pdf` → `attention_is_all_you_need_2017`
+   - **无标题输入处理**：如果输入的 `file_name` 仅包含 arXiv ID（如 `1409.3215v3`）、数字或代号，不包含论文标题：
+     - 若 Agent 具有联网查询或 PDF 读取能力，应优先检索/读取其真实标题再生成 slug。
+     - 若无法获取真实标题，**严禁凭空猜测标题**。应直接将该 ID 规范化作为临时 slug（如 `arxiv_1409_3215_2014`），并依赖后续 `PARSE` 阶段的「Slug 自动修正」机制进行重命名。
 2. **唯一性检查**：检查 `01_Sources/` 下是否已存在同名 `_解析/` 目录。若冲突，提示用户添加区分后缀（如第一作者姓氏）
 
 ## 模式 A：一键初始化开荒模式
@@ -93,11 +96,11 @@
 **首 chunk 元数据自动回填**：PARSE 处理第一个 chunk 时，Agent 必须从论文原文中提取准确的论文全称、作者列表、DOI/arXiv 链接和 Keywords/Index Terms，然后：
 - 回填 `00_README.md` 的元数据字段（论文全称、作者、DOI/URL、Keywords 等详细源数据均存放于此）
 - 更新 `INDEX_论文阅读总目录.md` 和 `01_Sources/INDEX_独立目录.md` 中该论文条目的**显示名称**（INDEX 文件仅存放论文全称作为显示名，保持轻量可扫描）
-- **Slug 自动修正**：若当前 slug（源自 file_name）与论文实际标题差距过大（如 slug 为 `2406_12345v1` 而论文标题为 "Attention Is All You Need"），Agent 应在首 chunk 处理前：
-  1. 基于论文实际标题执行 **Step 0** 生成新 slug
-  2. 重命名 `_解析/` 目录为新 slug
-  3. 同步更新两个 INDEX 文件中的路径引用
-  4. 此操作仅在首 chunk 前执行（此时尚无 chunk 内容写入，不存在交叉引用断裂风险）
+- **Slug 自动修正（强制校验）**：在 `PARSE`（或 `PARSE_LITE`）处理第一个 chunk 时，Agent **必须**首先提取论文的真实标题，并与当前 `slug` 进行对比。若当前 `slug` 与真实标题不符（例如：当前为临时 slug `arxiv_1409_3215`，或由于之前 `INIT` 阶段猜测错误导致 slug 与实际标题完全无关），Agent **必须强制执行以下自动修正**：
+  1. 基于论文实际标题重新执行 **Step 0** 生成正确的 `slug`。
+  2. 重命名 `_解析/` 目录及其中已创建的所有文件为新 slug。
+  3. 同步更新 `INDEX_论文阅读总目录.md` 和 `01_Sources/INDEX_独立目录.md` 中对应的路径引用。
+  4. 此操作仅在首 chunk 写入前执行（此时尚无翻译内容写入，不存在交叉引用断裂风险）。
 
 ## 模式 B-Lite：精简解析模式
 
@@ -132,7 +135,7 @@
 ### B4. Agent 直接写文件（按顺序）
 1. 📋 **Append** → `00_README.md`（所有 chunk 的进度条目）
 2. 📄 **Append** → `01_Translation.md`（所有 chunk 的翻译主体）
-3. 📊 **Append** → `02_Logic_Flows.md`（仅有流程图的 chunk，无则跳过）
+3. 📊 **Append** → `02_Logic_Flows.md`（仅有流程图 of chunk，无则跳过）
 4. 📐 **Append** → `03_Math_Equations.md`（仅有公式的 chunk，无则跳过）
 5. 📌 **Append** → `04_Local_Glossary.md`（术语条目）
 6. 📌 **Append** → `02_Brain/INDEX_全局术语汇总.md`（新术语的中央注册）
@@ -146,7 +149,7 @@
 - 论文标识: phoenix_rover_control_2026
 - 已完成: chunk1 ~ chunk5
 - 最后处理的章节: "3.2 Sensor Fusion Architecture"
-- 最后翻译的原文末句: "The proposed framework achieves 95.3% accuracy on the benchmark dataset."
+- 最后翻译 of 原文末句: "The proposed framework achieves 95.3% accuracy on the benchmark dataset."
 - 剩余未处理章节: 3.3, 3.4, 4.1, 4.2, 5, 6
 - 下次续传起点: chunk6 → Section 3.3
 - 已注册术语: 异构数据_Heterogeneous Data, 特征级融合_Feature-level Fusion, 时间对齐_Temporal Alignment
@@ -174,7 +177,7 @@
 
 ### 文件 1：创建 `01_Sources/[slug]_解析/00_README.md`
 
-````markdown
+```markdown
 # 🏷️ [slug] 解析控制台
 
 - **论文全称**: [待 PARSE 自动回填]
@@ -191,7 +194,7 @@
 *提示：在 VS Code 预览模式下点击方框可直接打勾，Git 将自动追踪状态变更。*
 
 <!-- 以下进度条目将在模式 B 解析时自动生成并追加 -->
-````
+```
 
 ### 文件 2–5：创建其余核心文件
 
@@ -206,15 +209,15 @@
 
 ### 文件 6：追加到 `INDEX_论文阅读总目录.md`
 
-````markdown
+```markdown
 - ⌛ [slug] — [待PARSE回填论文全称] | 初始化: YYYY-MM-DD | 完成: — → [解析控制台](./01_Sources/[slug]_解析/00_README.md)
-````
+```
 
 ### 文件 7：追加到 `01_Sources/INDEX_独立目录.md`
 
-````markdown
+```markdown
 - ⌛ [slug] — PDF: [本地原件](./[slug].pdf) | 解析: [进入目录](./[slug]_解析/00_README.md) | 初始化: YYYY-MM-DD | 完成: —
-````
+```
 
 > 当论文全部 chunk 解析完成后，Agent 将 `⌛` 更新为 `✅`，并填入完成日期。PARSE 首 chunk 时自动回填论文全称。
 
@@ -230,11 +233,11 @@
 
 为本批次每个 chunk 追加一条进度条目：
 
-````markdown
+```markdown
 - [ ] [2026-05-28] [chunk1: 引言与研究动机](./01_Translation.md#chunk1)
 - [ ] [2026-05-28] [chunk2: 相关工作综述](./01_Translation.md#chunk2)
 - [ ] [2026-05-28] [chunk3: 传感器融合架构设计](./01_Translation.md#chunk3)
-````
+```
 
 ---
 
@@ -242,7 +245,7 @@
 
 按 chunk 顺序，连续输出所有翻译主体：
 
-````markdown
+```markdown
 <div id="chunk1"></div>
 
 ---
@@ -271,12 +274,12 @@
 > Several studies have attempted to address this challenge through multi-modal fusion techniques. Li et al. proposed a cascaded attention mechanism that processes each modality independently before combining them at the decision level. Their approach demonstrated promising results on indoor datasets, but it suffers from poor generalization when deployed in uncontrolled outdoor environments.
 
 **🎯 精确译文：**
-多项研究已尝试通过多模态融合技术解决上述挑战。Li 等人提出了一种级联注意力机制（Cascaded Attention Mechanism），该机制先独立处理各模态数据，再在[决策级](./04_Local_Glossary.md#决策级融合_decision-level-fusion)进行融合。Li 等人的方法在室内数据集上取得了可观的效果，但将该方法部署至非受控室外环境时，其泛化能力（Generalization）表现不佳。
+多项研究已尝试通过多模态融合技术解决上述挑战。Li 等人提出了一种级联注意力机制（Cascaded Attention Mechanism），该机制先独立处理各模态 data，再在[决策级](./04_Local_Glossary.md#决策级融合_decision-level-fusion)进行融合。Li 等人的方法在室内数据集上取得了可観的效果，但将该方法部署至非受控室外环境时，其泛化能力（Generalization）表现不佳。
 
 **🔍 翻译纠错与指代澄清：**  [B-Lite: 省略此区域]
 - **代词澄清**：原文 "Their approach" 特指上一句 Li et al. 提出的级联注意力机制，而非多模态融合技术的统称；"it suffers" 中的 "it" 同样指该机制
 - **术语对齐**：multi-modal fusion 译为"多模态融合"（非"多模式融合"），decision level 译为"决策级"以与"特征级""数据级"形成标准三级分类体系
-````
+```
 
 ---
 
@@ -284,7 +287,7 @@
 
 **仅输出包含流程/架构内容的 chunk。若本批次所有 chunk 均无流程内容，则跳过此文件。**
 
-````markdown
+```markdown
 <div id="flow_chunk3"></div>
 
 #### 📊 chunk3: 传感器融合架构设计 — 系统架构图
@@ -299,7 +302,6 @@ flowchart TD
 ```
 
 ---
-````
 
 ---
 
@@ -307,7 +309,7 @@ flowchart TD
 
 **仅输出包含数学公式的 chunk。若本批次所有 chunk 均无公式，则跳过此文件。**
 
-````markdown
+```markdown
 <div id="eq_chunk3"></div>
 
 #### 📐 chunk3: 传感器融合架构设计 — 核心公式推导
@@ -327,7 +329,7 @@ $$
 | $\tau_i$ | 第 $i$ 个传感器的时间延迟补偿量 | ms |
 
 ---
-````
+```
 
 ---
 
@@ -335,13 +337,13 @@ $$
 
 输出本批次所有**新出现**的术语（跳过断点锚标中已列出的已注册术语）：
 
-````markdown
+```markdown
 - **[异构数据_Heterogeneous Data](../../02_Brain/INDEX_全局术语汇总.md#异构数据_heterogeneous-data)**：在本文中特指来自不同类型传感器（温度、加速度、GPS）的数据在格式、采样率和精度上的差异
 
 - **[特征级融合_Feature-level Fusion](../../02_Brain/INDEX_全局术语汇总.md#特征级融合_feature-level-fusion)**：在本文中特指将多源传感器的中间特征表示进行拼接或注意力加权后送入统一分类器的策略
 
 - **[决策级融合_Decision-level Fusion](../../02_Brain/INDEX_全局术语汇总.md#决策级融合_decision-level-fusion)**：在本文中特指各模态独立产生决策结果后，通过投票或加权策略合并最终输出
-````
+```
 
 ---
 
@@ -349,17 +351,17 @@ $$
 
 仅追加中央术语库中**尚未存在**的新术语（Agent 需先读取该文件检查）：
 
-````markdown
+```markdown
 ## 异构数据_Heterogeneous Data
 - **标准定义**: 指来源、格式、结构或语义不统一的数据集合
 - **不同语境解读**:
   - `[传感器网络]`: 不同类型传感器产生的数据在采样率、量化精度和物理量纲上存在差异
 
 ## 特征级融合_Feature-level Fusion
-- **标准定义**: 在特征空间中对多源数据进行融合的方法，区别于数据级融合和决策级融合
+- **标准定义**: 在特征空间中对多源数据进行融合的方法，区别于数据级融合 and 决策级融合
 - **不同语境解读**:
   - `[深度学习]`: 将多个编码器的中间层输出进行拼接（concatenation）或注意力加权后送入下游任务头
-````
+```
 
 ---
 
@@ -371,7 +373,7 @@ $$
 - 解析模式: PARSE / PARSE_LITE
 - 已完成: chunk1 ~ chunk5
 - 最后处理的章节: "3.2 Sensor Fusion Architecture"
-- 最后翻译的原文末句: "The proposed framework achieves 95.3% accuracy on the benchmark dataset."
+- 最后翻译 of 原文末句: "The proposed framework achieves 95.3% accuracy on the benchmark dataset."
 - 剩余未处理章节: 3.3, 3.4, 4.1, 4.2, 5, 6
 - 下次续传起点: chunk6 → Section 3.3
 - 已注册术语: 异构数据_Heterogeneous Data, 特征级融合_Feature-level Fusion, 决策级融合_Decision-level Fusion, 时间对齐_Temporal Alignment
