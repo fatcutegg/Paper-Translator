@@ -21,7 +21,7 @@ def verify_skill_md(file_path="SKILL.md"):
         (r"(?<![a-zA-Z])and(?![a-zA-Z])", "English 'and' inside Chinese text (should be '与' or '或')"),
         (r"(?<![a-zA-Z])any(?![a-zA-Z])", "English 'any' inside Chinese text (should be '任何')"),
         (r"の", "Japanese 'の' inside Chinese text"),
-        (r"的的", "Duplicate '集的的'")
+        (r"集", "Duplicate '集的的'")
     ]
     
     success = True
