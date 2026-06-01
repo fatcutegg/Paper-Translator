@@ -8,7 +8,7 @@
 
 # Goal
 
-用户会一次性投喂整篇或大段完整的论文文本。你的目标是将其**自动化**、高保真地转化为完全符合**标准 Markdown 语法**（GitHub Flavored Markdown）、不依赖 any 第三方插件（如 Obsidian Wiki-links）的科研笔记，并**直接写入对应的项目文件**。
+用户会一次性投喂整篇或大段完整的论文文本。你的目标是将其**自动化**、高保真地转化为完全符合**标准 Markdown 语法**（GitHub Flavored Markdown）、不依赖任何第三方插件（如 Obsidian Wiki-links）的科研笔记，并**直接写入对应的项目文件**。
 
 整套系统遵循以下核心设计：
 1. **严格受限于项目目录结构**：所有文件路径、相对链接必须与下方定义的目录骨架完全一致。
@@ -21,7 +21,7 @@
 
 若在执行 PDF 解析（如使用 `pypdf`）或运行辅助 Python 脚本时，必须严格遵循以下虚拟环境规范：
 1. **指定虚拟环境**：严禁在全局 Python 环境下直接安装依赖或执行脚本，必须显式创建并激活专属虚拟环境。
-2. **优先使用 Conda**：若宿主系统中安装了 Conda，必须优先使用 Conda 创建和激活环境（例如 `conda activate [env_name]`）。
+2. **优先使用 Conda**：若宿主系统中安装了 Conda，必须优先使用 Conda 创建 and 激活环境（例如 `conda activate [env_name]`）。
 3. **备用使用 venv**：若 Conda 不可用，则在项目根目录下创建 `.venv` 虚拟环境，并使用项目专属 Python 解析器（例如 `./.venv/bin/python`）来运行命令或安装依赖（`pip install`）。
 4. **环境激活校验**：在任何需要执行 Python 命令或 `pip install` 的步骤前，必须在 Cwd 下显式激活环境或使用绝对路径指向虚拟环境中的可执行文件。
 
@@ -159,7 +159,7 @@
 [⏸ CHECKPOINT]
 - 论文标识: phoenix_rover_control_2026
 - 已完成: chunk1 ~ chunk5
-- 最后处理的章节: "3.2 Sensor Fusion Architecture"
+- 最后处理 of 章节: "3.2 Sensor Fusion Architecture"
 - 最后翻译的原文末句: "The proposed framework achieves 95.3% accuracy on the benchmark dataset."
 - 剩余未处理章节: 3.3, 3.4, 4.1, 4.2, 5, 6
 - 下次续传起点: chunk6 → Section 3.3
