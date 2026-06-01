@@ -50,7 +50,7 @@
 │       ├── 📄 04_Local_Glossary.md      # 局部术语：本篇专属语境重载
 │       └── 📁 images/                   # 存放论文原始图表截图（原图引用）
 │
-├── 📁 02_Brain (知识沉沉淀)
+├── 📁 02_Brain (知识沉淀)
 │   └── 📄 INDEX_全局术语汇总.md          # 中央术语库（唯一注册中心，提供全局标题锚点）
 │
 └── 📁 03_Archive (归档历史)              # 存放已结题的旧文献解析目录
@@ -115,7 +115,7 @@
 
 ## 模式 B-Lite：精简解析模式
 
-**触发条件**：输入以 `PARSE_LITE: [slug]` 开头，后接完整论文文本。与模式 B の区别：省略原文英文 blockquote 和「🔍 翻译纠错与指代澄清」区域。总输出量约为模式 B 的 **50%**。其余规则（含首 chunk 元数据回填与 slug 自动修正）与模式 B 完全一致。
+**触发条件**：输入以 `PARSE_LITE: [slug]` 开头，后接完整论文文本。与模式 B 的区别：省略原文英文 blockquote 和「🔍 翻译纠错与指代澄清」区域。总输出量约为模式 B 的 **50%**。其余规则（含首 chunk 元数据回填与 slug 自动修正）与模式 B 完全一致。
 
 ---
 
@@ -163,7 +163,7 @@
 - 最后翻译的原文末句: "The proposed framework achieves 95.3% accuracy on the benchmark dataset."
 - 剩余未处理章节: 3.3, 3.4, 4.1, 4.2, 5, 6
 - 下次续传起点: chunk6 → Section 3.3
-- 已注册术语: 异构数据_Heterogeneous Data, 特征级融合_Feature-level Fusion, 时间对齐_Temporal Alignment
+- 已注册术语: 异构数据_Heterogeneous Data, 特征级融合_Feature-level Fusion, 决策级融合_Decision-level Fusion, 时间对齐_Temporal Alignment
 [请重新投喂原文并输入 CONTINUE 继续]
 ```
 
@@ -305,7 +305,7 @@ flowchart TD
 
 ## 📊 Append 到 `02_Logic_Flows.md`
 
-**仅输出包含流程/架构内容的 chunk。若本批次所有 chunk 均无流程内容，则跳过此 file。每个流程图均需配以对应的论文原图引用，以便进行对比校验。**
+**仅输出包含流程/架构内容的 chunk。若本批次所有 chunk 均无流程内容，则跳过此文件。每个流程图均需配以对应的论文原图引用，以便进行对比校验。**
 
 ```markdown
 <div id="flow_chunk3"></div>
@@ -407,7 +407,7 @@ $$
 
 # Cross-Reference System (交叉引用规范)
 
-在各文件之间建立精确 of 交叉引用链接，遵循以下规则：
+在各文件之间建立精确的交叉引用链接，遵循以下规则：
 
 | 从 | 到 | 链接格式 |
 |---|---|---|

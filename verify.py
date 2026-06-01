@@ -21,7 +21,7 @@ def verify_skill_md(file_path="SKILL.md"):
         (r"(?<![a-zA-Z])and(?![a-zA-Z])", "English 'and' inside Chinese text (should be '与' or '或')"),
         (r"(?<![a-zA-Z])any(?![a-zA-Z])", "English 'any' inside Chinese text (should be '任何')"),
         (r"の", "Japanese 'の' inside Chinese text"),
-        (r"的的", "Duplicate '的的'")
+        (r"的的", "Duplicate '集的的'")
     ]
     
     success = True
@@ -57,7 +57,7 @@ def verify_skill_md(file_path="SKILL.md"):
 
 def verify_vault_structure(vault_path="."):
     """
-    方案 A: 生成物整合性チェッカー (My_Research_Vaultのリンク切れや画像・Mermaidの构文エラーを验证)
+    方案 A: 生成物整合性チェッカー (My_Research_Vaultの链接切れや画像・Mermaidの构文エラーを验证)
     """
     print(f"[*] Verifying Vault structure in '{vault_path}'...")
     
