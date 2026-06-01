@@ -107,7 +107,7 @@
 **首 chunk 元数据自动回填**：PARSE 处理第一个 chunk 时，Agent 必须从论文原文中提取准确的论文全称、作者列表、DOI/arXiv 链接 和 Keywords/Index Terms，然后：
 - 回填 `00_README.md` 的元数据字段（论文全称、作者、DOI/URL、Keywords 等详细源数据均存放于此）
 - 更新 `INDEX_论文阅读总目录.md` 和 `01_Sources/INDEX_独立目录.md` 中该论文条目的**显示名称**（INDEX 文件仅存放论文全称作为显示名，保持轻量可扫描）
-- **Slug 自动修正（强制校验）**：在 `PARSE`（或 `PARSE_LITE`）处理第一个 chunk 时，Agent **必须**首先提取论文的真实标题，并与当前 `slug` 进行对比。若当前 `slug` 与真实标题不符（例如：当前为临时 slug `arxiv_1409_3215`，或由于之前 `INIT` 阶段猜测错误导致 slug 与实际标题完全无关），Agent **必须强制执行以下自动修正**：
+- **Slug 自动修正（强制校验）**：在 `PARSE`（或 `PARSE_LITE`）处理第一个 chunk 时，Agent **必须**首先提取论文的真实标题，并与当前 `slug`进行对比。若当前 `slug` 与真实标题不符（例如：当前为临时 slug `arxiv_1409_3215`，或由于之前 `INIT` 阶段猜测错误导致 slug 与实际标题完全无关），Agent **必须强制执行以下自动修正**：
   1. 基于论文实际标题重新执行 **Step 0** 生成正确的 `slug`。
   2. 重命名 `_解析/` 目录及其中已创建的所有文件为新 slug。
   3. 同步更新 `INDEX_论文阅读总目录.md` 和 `01_Sources/INDEX_独立目录.md` 中对应的路径引用。
@@ -159,7 +159,7 @@
 [⏸ CHECKPOINT]
 - 论文标识: phoenix_rover_control_2026
 - 已完成: chunk1 ~ chunk5
-- 最后处理 of 章节: "3.2 Sensor Fusion Architecture"
+- 最后处理的章节: "3.2 Sensor Fusion Architecture"
 - 最后翻译的原文末句: "The proposed framework achieves 95.3% accuracy on the benchmark dataset."
 - 剩余未处理章节: 3.3, 3.4, 4.1, 4.2, 5, 6
 - 下次续传起点: chunk6 → Section 3.3
@@ -214,7 +214,7 @@
 | 文件名 | 标题行 | 描述行 |
 |---|---|---|
 | `01_Translation.md` | `# 📑 论文中英对照翻译主体` | `> 本文件按 chunk 顺序记录完整的中英对照翻译。每个 chunk 包含 HTML 锚点，可从 00_README.md 直接跳转。` |
-| `02_Logic_Flows.md` | `# 📊 Mermaid 逻辑流与架构重绘` | `> 仅收录包含算法步骤、系统架构或硬件控制流的 chunk 对应的 Mermaid 图表。` |
+| `02_Logic_Flows.md` | `# 📊 Mermaid 逻辑流与架构重绘` | `> 仅收录包含算法步骤、系统架构或硬件控制流 of chunk 对应的 Mermaid 图表。` |
 | `03_Math_Equations.md` | `# 📐 LaTeX 数学公式与符号推导` | `> 仅收录包含数学公式的 chunk 对应的 LaTeX 展开与变量详解。` |
 | `04_Local_Glossary.md` | `# 📌 本篇论文专属术语对齐` | `> 术语均通过标准 Markdown 相对路径链接至中央术语库 02_Brain/INDEX_全局术语汇总.md，并在本地进行语境重载。` |
 
@@ -331,7 +331,7 @@ flowchart TD
 
 ## 📐 Append 到 `03_Math_Equations.md`
 
-**仅输出包含数学公式 of chunk。若本批次所有 chunk 均无公式，则跳过此文件。**
+**仅输出包含数学公式的 chunk。若本批次所有 chunk 均无公式，则跳过此文件。**
 
 ```markdown
 <div id="eq_chunk3"></div>
@@ -362,7 +362,7 @@ $$
 输出本批次所有**新出现**的术语（跳过断点锚标中已列出的已注册术语）：
 
 ```markdown
-- **[异构数据_Heterogeneous Data](../../02_Brain/INDEX_全局术语汇总.md#异构数据_heterogeneous-data)**：在本文中特指来自不同类型传感器（温度、加速度、GPS）的数据在格式、采样率和精度上的差异
+- **[异构数据_Heterogeneous Data](../../02_Brain/INDEX_全局术语汇总.md#异构数据_heterogeneous-data)**：在本文中特指来自不同类型传感器（温度、加速度、GPS）的数据在格式、采样率 and 精度上的差异
 
 - **[特征级融合_Feature-level Fusion](../../02_Brain/INDEX_全局术语汇总.md#特征级融合_feature-level-fusion)**：在本文中特指将多源传感器的中间特征表示进行拼接或注意力加权后送入统一分类器的策略
 
@@ -395,7 +395,7 @@ $$
 [⏸ CHECKPOINT]
 - 论文标识: phoenix_rover_control_2026
 - 已完成: chunk1 ~ chunk5
-- 最后处理 of 章节: "3.2 Sensor Fusion Architecture"
+- 最后处理的章节: "3.2 Sensor Fusion Architecture"
 - 最后翻译的原文末句: "The proposed framework achieves 95.3% accuracy on the benchmark dataset."
 - 剩余未处理章节: 3.3, 3.4, 4.1, 4.2, 5, 6
 - 下次续传起点: chunk6 → Section 3.3
