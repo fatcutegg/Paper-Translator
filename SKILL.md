@@ -109,7 +109,7 @@
 - 更新 `INDEX_论文阅读总目录.md` 和 `01_Sources/INDEX_独立目录.md` 中该论文条目的**显示名称**（INDEX 文件仅存放论文全称作为显示名，保持轻量可扫描）
 - **Slug 自动修正（强制校验）**：在 `PARSE`（或 `PARSE_LITE`）处理第一个 chunk 时，Agent **必须**首先提取论文的真实标题，并与当前 `slug` 进行对比。若当前 `slug` 与真实标题不符（例如：当前为临时 slug `arxiv_1409_3215`，或由于之前 `INIT` 阶段猜测错误导致 slug 与实际标题完全无关），Agent **必须强制执行以下自动修正**：
   1. 基于论文实际标题重新执行 **Step 0** 生成正确的 `slug`。
-  2. 重命名 `_解析/` 目录及其中已创建的所有文件为新 slug.
+  2. 重命名 `_解析/` 目录及其中已创建的所有文件为新 slug。
   3. 同步更新 `INDEX_论文阅读总目录.md` 和 `01_Sources/INDEX_独立目录.md` 中对应的路径引用。
   4. 此操作仅在首 chunk 写入前执行（此时尚无翻译内容写入，不存在交叉引用断裂风险）。
 
@@ -174,7 +174,7 @@
 | 情况 | 处理方式 |
 |---|---|
 | 输入含 OCR 乱码或明显错误 | 在译文中修正，并在纠错区域标注 `[OCR 修正: 原文为 "xxx"，疑为 "yyy"]` |
-| 论文含图片/表格 | 1. **提取/截取原图**：将原始图片保存至 `images/` 目录下（如 `images/fig_X.png`）。<br>2. **相对应位置放置（分阶段方案）**：在 `01_Translation.md` 的对应译文段落下方紧接着插入：<br> - **临时方案**：仅在相对应位置放上原图引用：`![原图 X](./images/fig_X.png)`。<br> - **改进版**：在原图下方并排/紧接着放上 Mermaid 重绘图表代码块。<br>3. **归档登记**：将原图引用 and Mermaid 重绘同时在 `02_Logic_Flows.md` 中进行登记归档。 |
+| 论文含图片/表格 | 1. **提取/截取原图**：将原始图片保存至 `images/` 目录下（如 `images/fig_X.png`）。<br>2. **相对应位置放置（分阶段方案）**：在 `01_Translation.md` 的对应译文段落下方紧接着插入：<br> - **临时方案**：仅在相对应位置放上原图引用：`![原图 X](./images/fig_X.png)`。<br> - **改进版**：在原图下方并排/紧接着放上 Mermaid 重绘图表代码块。<br>3. **归档登记**：将原图引用和 Mermaid 重绘同时在 `02_Logic_Flows.md` 中进行登记归档。 |
 | 论文无 Abstract/摘要 | 跳过，不生成空壳 chunk |
 | 输入不是学术论文 | 提醒用户本 SKILL 仅适用于学术论文解析，询问是否继续 |
 | 公式使用图片而非文本 | 输出 `[公式图片: 请手动补充 LaTeX]` 占位符 |
@@ -331,7 +331,7 @@ flowchart TD
 
 ## 📐 Append 到 `03_Math_Equations.md`
 
-**仅输出包含数学公式的 chunk。若本批次所有 chunk 均无公式，则跳过此文件。**
+**仅输出包含数学公式 of chunk。若本批次所有 chunk 均无公式，则跳过此文件。**
 
 ```markdown
 <div id="eq_chunk3"></div>
@@ -395,7 +395,7 @@ $$
 [⏸ CHECKPOINT]
 - 论文标识: phoenix_rover_control_2026
 - 已完成: chunk1 ~ chunk5
-- 最后处理的章节: "3.2 Sensor Fusion Architecture"
+- 最后处理 of 章节: "3.2 Sensor Fusion Architecture"
 - 最后翻译的原文末句: "The proposed framework achieves 95.3% accuracy on the benchmark dataset."
 - 剩余未处理章节: 3.3, 3.4, 4.1, 4.2, 5, 6
 - 下次续传起点: chunk6 → Section 3.3
@@ -417,7 +417,7 @@ $$
 | `01_Translation.md` 译文中出现术语 | `04_Local_Glossary.md` 对应术语锚点 | `[术语中文](./04_Local_Glossary.md#术语_english-term)` |
 | `04_Local_Glossary.md` 局部术语 | `02_Brain/INDEX_全局术语汇总.md` 中央库 | `[术语_English](../../02_Brain/INDEX_全局术语汇总.md#术语_english)` |
 
-**所有链接必须使用 standard Markdown 语法 `[显示文本](相对路径#锚点)`，严禁使用双方括号 `[[ ]]` 等非标准语法。**
+**所有链接必须使用标准 Markdown 语法 `[显示文本](相对路径#锚点)`，严禁使用双方括号 `[[ ]]` 等非标准语法。**
 
 ---
 
